@@ -1,0 +1,26 @@
+{
+  "name": "autorotate-image-cloud-function",
+  "version": "0.1.0",
+  "description": "Autorotate images on upload",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/justingrayston/autorotate-image-cloud-function.git"
+  },
+  "author": "Justin Grayston",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/justingrayston/autorotate-image-cloud-function/issues"
+  },
+  "homepage": "https://github.com/justingrayston/autorotate-image-cloud-function#readme",
+  "dependencies": {
+    "@google-cloud/pubsub": "^0.22.2",
+    "@google-cloud/storage": "^2.3.3",
+    "firebase-admin": "^6.4.0",
+    "fs": "0.0.1-security",
+    "jpeg-autorotate": "^4.0.1"
+  }
+}
