@@ -48,8 +48,13 @@ function autorotate(tmpPath) {
       console.log('Orientation was: ' + orientation);
       console.log('Height after rotation: ' + dimensions.height);
       console.log('Width after rotation: ' + dimensions.width);
-      fs.writeFile(tmpPath, buffer);
-      resolve();
+      fs.writeFile(tmpPath, buffer, (err) => {
+        if (!err) {
+          resolve();
+        } else {
+          reject(err);
+        }
+      });
     });
   });
 }
@@ -60,7 +65,8 @@ function uploadRotatedImage(gcsObject, tmpPath) {
   metadata['rotated'] = true;
   return bucket.upload(tmpPath, {
     destination: gcsObject.name,
-    metadata: metadata
+    metadata: metadata,
+    resumable: false
   });
 }
 
@@ -74,16 +80,13 @@ function isJpeg(contentType) {
 function notifyViaPubSub(gcsObject) {
   const topic = process.env['IMAGE_ORIENTATION_NOTIFY_TOPIC'];
   const dataBuffer = Buffer.from(JSON.stringify(gcsObject));
-  return pubsubClient.topic(topic)
-    .publisher()
-    .publish(dataBuffer)
+  return pubsubClient.topic(topic).publish(dataBuffer);
 }
 
 exports.autoRotateImage = (event) => {
   // First load the image to store locally while we process.
-  const gcsObject = event.data;
-  console.log(`Metagen ${gcsObject.metageneration}`);
-  console.log(`gcsObject ${JSON.stringify(gcsObject)}`);
+  const gcsObject = event;
+
   // Don't run if already rotated.
   if (gcsObject.metageneration > 1 ) {
     console.log('already rotated');
